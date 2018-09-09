@@ -104,7 +104,7 @@ CMD \
   ["-c", "/opt/deluge/config", "-l", "/opt/deluge/config/deluged.log", "-L", "info"]
 
 LABEL \
-  maintainer="lateen@adria@protonmail.com" \
+  maintainer="lateen.adria@protonmail.com" \
   image.name="stable" \
   git.branch="master" \
   from="ubuntu:18.04" \

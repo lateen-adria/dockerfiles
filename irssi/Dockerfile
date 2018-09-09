@@ -65,7 +65,7 @@ CMD \
   ["--configfile=/opt/", "--accesslog.filepath=/opt/"]
 
 LABEL \
-  maintainer="lateen@adria@protonmail.com" \
+  maintainer="lateen.adria@protonmail.com" \
   image.name="stable" \
   git.branch="master" \
   from="ubuntu:18.04" \
