@@ -1,28 +1,24 @@
 #Maintainer lateen.adria@protonmail.com
-#"App Name"
-#"App Description"
+#Sonarr
+#Sonarr PVR
 
 FROM ubuntu:18.04
 
 ENV \
-  TZ=Europe/Berlin \
-  APP_VERSION="0.0" \
+  TZ="Europe/Berlin" \
   APP_ARCH="amd64" \
-  APP_DIR="/opt/app" \
-  APP_USER="app" \
-  APP_GROUP="app" \
+  APP_DIR="/opt/sonarr" \
+  APP_USER="sonarr" \
+  APP_GROUP="sonarr" \
   APP_UID="1000" \
   APP_GID="1000" \
-  APP_STATUS_PORT="8080" \
-  APP_HTTP_PORT="80" \
-  APP_HTTPS_PORT="443" 
+  APP_HTTP_PORT="8989"
 
 RUN \
+  set -x && \
   mkdir \
     --parents --verbose \
-      ${APP_DIR} \
-      ${APP_DIR}/config \
-      ${APP_DIR}/logs && \
+      ${APP_DIR} && \  
   addgroup \
     --system \
     --gid ${APP_GID} \
@@ -32,45 +28,51 @@ RUN \
     --home ${APP_DIR} \
     --no-create-home \
     --uid ${APP_UID} \
-    --gecos "App system user" \
+    --gecos "Deluge system user" \
     --ingroup ${APP_GROUP} \
     --disabled-login \
       ${APP_USER}
 
 RUN \
-  apt-get update && apt-get install -y \
-    wget && \
-  wget -O /usr/local/bin/app "https://github.com/user/repo/releases/download/v${APP_VERSION}/app_linux-${APP_ARCH}" && \
-  chmod +x /usr/local/bin/app && \
-  apt-get remove -y \
-    wget && \
+  set -x && \
+  apt-get update && \
+  DEBIAN_FRONTEND=noninteractive \
+  apt-get install -y \
+    tzdata gnupg-utils && \
+  apt-key adv \
+    --keyserver keyserver.ubuntu.com --recv-keys FDA5DFFC && \
+  echo "deb http://apt.sonarr.tv/ master main" >> /etc/apt/sources.list.d/sonarr.list && \
+  apt-get update && \
+  DEBIAN_FRONTEND=noninteractive \
+  apt-get install -y \
+    libcurl3 nzbdrone && \
+  apt-get --purge remove -y \
+    gnupg-utils && \
+  apt-get --purge autoremove -y && \
   rm -rf \
     /tmp/* \
     /var/tmp/* \
     /var/lib/apt/lists/* && \
   chown -R \
-    ${APP_USER}:${APP_GROUP} \
-    ${APP_DIR}
+    ${APP_USER}:${APP_GROUP} ${APP_DIR}
 
 EXPOSE \
-  ${APP_STATUS_PORT} \
-  ${APP_HTTP_PORT} \
-  ${APP_HTTPS_PORT}
+  ${APP_HTTP_PORT}
 
 USER \
   ${APP_UID}:${APP_GID}
 ENTRYPOINT \
-  ["/usr/local/bin/app"]
+  ["/usr/bin/mono"]
 CMD \
-  ["--configfile=/opt/", "--accesslog.filepath=/opt/"]
+  ["/opt/NzbDrone/NzbDrone.exe","-nobrowser","-data=/opt/sonarr/config"]
 
 LABEL \
   maintainer="lateen@adria@protonmail.com" \
   image.name="stable" \
   git.branch="master" \
   from="ubuntu:18.04" \
-  c_software_name="app" \
-  c_software_url="https://app.io/" \
+  c_software_name="sonarr" \
+  c_software_url="https://sonarr.tv" \
   image.version="0.0" \
   date.version="0.0.2018" \
   web_interface="true" \
