@@ -73,8 +73,8 @@ LABEL \
   from="ubuntu:18.04" \
   c_software_name="sonarr" \
   c_software_url="https://sonarr.tv" \
-  image.version="0.0" \
-  date.version="0.0.2018" \
+  image.version="0.1" \
+  date.version="13.9.2018" \
   web_interface="true" \
   web_interface_port=${APP_STATUS_PORT} \
   exposed_ports=${APP_STATUS_PORT},${APP_HTTP_PORT},${APP_HTTPS_PORT}  \
